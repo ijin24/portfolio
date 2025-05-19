@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Portfolio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f4f4f4;
+      color: #333;
+    }
+    header {
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 15px;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .profile-pic {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid white;
+    }
+    main {
+      max-width: 900px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    section {
+      margin-bottom: 40px;
+    }
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+    form label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    form button {
+      margin-top: 15px;
+      background: #333;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    form button:hover {
+      background: #555;
+    }
+    .project {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.05);
+    }
+    .project button {
+      margin-top: 10px;
+    }
+    #task-list li {
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+    #task-list li button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+    #task-list li button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="profile.jpg" alt="Profile Picture" class="profile-pic" />
+  <nav>
+    <a href="#welcome">Home</a>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <section id="welcome">
+    <h1>Welcome</h1>
+    <p>This is my personal portfolio website!</p>
+  </section>
+
+  <section id="about">
+    <h2>About Me</h2>
+    <p>I am a student passionate about coding and web development. I love anime and drawing manga. This portfolio showcases my work, skills, and growth.</p>
+  </section>
+
+  <section id="projects">
+    <h2>My Projects</h2>
+
+    <div class="project" id="todo-app">
+      <h3>CRUD To-Do App</h3>
+      <p>A simple to-do app to add, edit, update, and delete tasks.</p>
+      <form id="todo-form">
+        <input type="text" id="task-input" placeholder="Enter a task" required />
+        <button type="submit">Add</button>
+      </form>
+      <ul id="task-list"></ul>
+    </div>
+
+    <div class="project" id="anime-blog">
+      <h3>My Anime Blog</h3>
+      <p>A blog project where I review and recommend my favorite anime series and manga.</p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Me</h2>
+    <form id="contact-form">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" placeholder="Your name" required />
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Your email" required />
+      <label for="message">Message</label>
+      <textarea id="message" name="message" rows="4" placeholder="Your message" required></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </section>
+</main>
+
+<script>
+  const todoForm = document.getElementById('todo-form');
+  const taskInput = document.getElementById('task-input');
+  const taskList = document.getElementById('task-list');
+  let editIndex = null;
+
+  todoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const taskText = taskInput.value.trim();
+    if (taskText === '') return;
+
+    if (editIndex !== null) {
+      const li = taskList.children[editIndex];
+      li.querySelector('.task-text').textContent = taskText;
+      todoForm.querySelector('button').textContent = 'Add';
+      editIndex = null;
+    } else {
+      const li = document.createElement('li');
+      const span = document.createElement('span');
+      span.className = 'task-text';
+      span.textContent = taskText;
+
+      const editBtn = document.createElement('button');
+      editBtn.textContent = 'Edit';
+      editBtn.addEventListener('click', () => {
+        taskInput.value = span.textContent;
+        editIndex = Array.from(taskList.children).indexOf(li);
+        todoForm.querySelector('button').textContent = 'Update';
+      });
+
+      const delBtn = document.createElement('button');
+      delBtn.textContent = 'Delete';
+      delBtn.addEventListener('click', () => {
+        taskList.removeChild(li);
+        if (editIndex !== null && editIndex >= taskList.children.length) {
+          editIndex = null;
+          todoForm.querySelector('button').textContent = 'Add';
+        }
+      });
+
+      li.appendChild(span);
+      li.appendChild(editBtn);
+      li.appendChild(delBtn);
+      taskList.appendChild(li);
+    }
+
+    taskInput.value = '';
+  });
+
+  const contactForm = document.getElementById('contact-form');
+  contactForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Thank you for reaching out! I will get back to you soon.');
+    contactForm.reset();
+  });
+</script>
+
+</body>
+</html>
